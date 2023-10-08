@@ -29,7 +29,8 @@ class VideoPlayer:
         else:
             # If the video ends, you can add logic to handle this event
             self.video_capture.release()
-        self.root.after(10, self.update)
+
+        self.root.after(33, self.update)
 
     def display_frame(self, frame):
         image = Image.fromarray(frame)
