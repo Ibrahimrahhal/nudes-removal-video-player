@@ -23,7 +23,7 @@ class VideoPlayer:
         ret, frame = self.video_capture.read()
         
         if ret:
-            nude_detector.detect_raw(frame)
+            print(nude_detector.detect_raw(frame))
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             self.display_frame(frame)
         else:
