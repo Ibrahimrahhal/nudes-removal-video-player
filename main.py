@@ -2,12 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
+from nudenet import NudeDetector
 
 class VideoPlayer:
     def __init__(self, root):
         self.root = root
         self.root.title("Video Player")
-
+        self.nude_detector = NudeDetector()
         self.frame = tk.Frame(self.root)
         self.frame.pack()
 
@@ -20,13 +21,14 @@ class VideoPlayer:
 
     def update(self):
         ret, frame = self.video_capture.read()
+        
         if ret:
+            nude_detector.detect_raw(frame)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             self.display_frame(frame)
         else:
             # If the video ends, you can add logic to handle this event
             self.video_capture.release()
-
         self.root.after(10, self.update)
 
     def display_frame(self, frame):
