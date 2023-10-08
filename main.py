@@ -2,9 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
-import pygame
-from pygame.locals import *
-from moviepy.editor import VideoFileClip
 
 class VideoPlayer:
     def __init__(self, root):
@@ -17,32 +14,20 @@ class VideoPlayer:
         self.video_label = ttk.Label(self.frame)
         self.video_label.pack()
 
-        self.video_clip = VideoFileClip('video.mp4')
-        self.audio_clip = self.video_clip.audio
-        self.audio_initialized = False
-
-        self.current_time = 0
+        self.video_capture = cv2.VideoCapture('video.mp4') 
 
         self.update()
 
     def update(self):
-        frame = self.video_clip.get_frame(self.current_time)
-        if frame is not None:
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        ret, frame = self.video_capture.read()
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             self.display_frame(frame)
-
-            if not self.audio_initialized:
-                pygame.mixer.init()
-                pygame.mixer.music.load(self.audio_clip.fps, self.audio_clip.reader.nchannels)
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play()
-                self.audio_initialized = True
         else:
-            self.video_clip.close()
+            # If the video ends, you can add logic to handle this event
+            self.video_capture.release()
 
-        self.current_time += 1 / self.video_clip.fps * 1000
-        if self.current_time <= self.video_clip.duration * 1000:
-            self.root.after(10, self.update)
+        self.root.after(33, self.update)
 
     def display_frame(self, frame):
         image = Image.fromarray(frame)
