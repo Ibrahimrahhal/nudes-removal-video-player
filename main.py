@@ -17,14 +17,16 @@ class VideoPlayer:
         self.video_label = ttk.Label(self.frame)
         self.video_label.pack()
 
-        self.video_clip = VideoFileClip('your_video.mp4') 
+        self.video_clip = VideoFileClip('video.mp4')
         self.audio_clip = self.video_clip.audio
         self.audio_initialized = False
+
+        self.current_time = 0
 
         self.update()
 
     def update(self):
-        frame = self.video_clip.get_frame(self.video_clip.get_time())
+        frame = self.video_clip.get_frame(self.current_time)
         if frame is not None:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             self.display_frame(frame)
@@ -38,7 +40,9 @@ class VideoPlayer:
         else:
             self.video_clip.close()
 
-        self.root.after(10, self.update)
+        self.current_time += 1 / self.video_clip.fps * 1000
+        if self.current_time <= self.video_clip.duration * 1000:
+            self.root.after(10, self.update)
 
     def display_frame(self, frame):
         image = Image.fromarray(frame)
